@@ -1,0 +1,114 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.track {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0.25rem 0;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 5rem;
+  padding: 1rem 1.5rem;
+  box-sizing: border-box;
+  border-radius: 14px;
+  background: rgba(20, 184, 166, 0.08);
+  border: 1px solid rgba(20, 184, 166, 0.18);
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.cardActive {
+  border-color: rgba(20, 184, 166, 0.4);
+  background: rgba(20, 184, 166, 0.12);
+}
+
+.numberRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-bottom: 0.35rem;
+}
+
+.metricNumber {
+  font-family: "Sora", system-ui, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: rgb(20, 184, 166);
+  letter-spacing: -0.02em;
+}
+
+.metricSuffix {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-left: 0.1em;
+  color: rgba(20, 184, 166, 0.8);
+}
+
+.metricDetail {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  max-width: 90%;
+}
+
+.metricDetailOnly {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: rgb(20, 184, 166);
+  margin: 0;
+  text-align: center;
+}
+
+/* Pagination dots */
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  transition: background 0.25s ease, transform 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dotActive {
+  background: var(--accent-electric-blue);
+  transform: scale(1.3);
+}
+
+@media (max-width: 480px) {
+  .dot {
+    width: 6px;
+    height: 6px;
+  }
+}

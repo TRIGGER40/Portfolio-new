@@ -1,0 +1,121 @@
+/* Offset anchors so fixed header doesn't cover section titles */
+#experience,
+#awards,
+#impact,
+#mentorship,
+#career-evolution,
+#thoughts,
+#testimonials {
+  scroll-margin-top: 100px;
+}
+
+/* Global confetti — transform and opacity are separate animations so each piece can use its own durations */
+@keyframes awardsConfettiFall {
+  0% {
+    transform: translate3d(var(--cf-tx0, 0px), -6vh, 0)
+      rotateX(var(--cf-rx0, 0deg)) rotateY(var(--cf-ry0, 0deg)) rotateZ(var(--cf-rz0, 0deg))
+      scaleX(var(--cf-flip, 1));
+  }
+  100% {
+    transform: translate3d(var(--cf-tx2, 0px), 118vh, 0)
+      rotateX(calc(var(--cf-rx0, 0deg) + 720deg)) rotateY(calc(var(--cf-ry0, 0deg) + 640deg))
+      rotateZ(calc(var(--cf-rz0, 0deg) + 1040deg)) scaleX(var(--cf-flip, 1));
+  }
+}
+
+@keyframes awardsConfettiFade {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  62% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.94;
+  }
+  77% {
+    opacity: 0.82;
+  }
+  84% {
+    opacity: 0.62;
+  }
+  90% {
+    opacity: 0.38;
+  }
+  95% {
+    opacity: 0.18;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.awards-confetti-piece {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 1px;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+  animation:
+    awardsConfettiFall var(--cf-fall-dur, 3.6s) linear var(--cf-delay, 0s) forwards,
+    awardsConfettiFade var(--cf-fade-dur, 3.6s) linear var(--cf-delay, 0s) forwards;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .awards-confetti-piece {
+    animation:
+      awardsConfettiFall 3.2s linear var(--cf-delay, 0s) forwards,
+      awardsConfettiFade 3.2s linear var(--cf-delay, 0s) forwards;
+  }
+}
+
+/* All breakpoints: full-bleed sections use vw / negative margins — contain width to the layout viewport */
+.app-page-shell {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Chat: shell is only Hero — match root scroll lock so nothing outside the hero paints a scrollable track */
+html.chat-page-scroll-lock .app-page-shell {
+  overflow: hidden;
+  overflow-x: clip;
+  height: 100%;
+  max-height: 100dvh;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.content-area {
+  position: relative;
+  z-index: 1;
+  overflow-x: hidden;
+  overflow-y: visible;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+main {
+  padding-bottom: 6rem;
+  overflow-x: hidden;
+  overflow-y: visible;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  main {
+    padding-bottom: max(4rem, env(safe-area-inset-bottom));
+  }
+}
+

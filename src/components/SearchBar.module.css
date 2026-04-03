@@ -1,0 +1,417 @@
+.wrapper {
+  /* Scale with viewport; min touch-friendly; calm desktop size */
+  --search-br: clamp(18px, 0.75rem + 0.65vw, 24px);
+  --search-glow-outset: 2px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 0.4rem + 0.9vw, 0.875rem);
+  padding: clamp(0.75rem, 0.55rem + 1.1vw, 1rem) clamp(1rem, 0.65rem + 1.85vw, 1.5rem);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--search-br);
+  transition:
+    border-color 0.85s cubic-bezier(0.33, 0.11, 0.25, 1),
+    background 0.85s cubic-bezier(0.33, 0.11, 0.25, 1),
+    box-shadow 0.85s cubic-bezier(0.33, 0.11, 0.25, 1);
+  width: 100%;
+  max-width: min(480px, 100%);
+  min-width: 0;
+}
+
+.wrapper.wide {
+  max-width: min(480px, 100%);
+}
+
+/* Home focused overlay: inherit --home-focus-prompt-width from .homeFocusedSlot */
+.wrapperHomeFocus {
+  max-width: var(--home-focus-prompt-width);
+}
+
+.wrapper.fullWidth {
+  max-width: 100%;
+}
+
+/* Touch / coarse pointer: skip hover — tap goes straight to .focused */
+@media (hover: hover) and (pointer: fine) {
+  .wrapper:hover {
+    border-color: var(--chat-search-hover-border, rgba(56, 189, 248, 0.45));
+    background: rgba(30, 35, 55, 0.65);
+    box-shadow:
+      var(--chat-search-hover-glow-1, 0 0 24px rgba(56, 189, 248, 0.12)),
+      var(--chat-search-hover-glow-2, 0 0 48px rgba(139, 92, 246, 0.06)),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    transition: border-color 0.45s ease, box-shadow 0.45s ease;
+  }
+
+  .wrapper:hover .icon {
+    color: var(--chat-search-hover-icon, rgba(56, 189, 248, 0.75));
+    transition: color 0.45s ease;
+  }
+
+  .searchClearBtn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .customizationChipDismiss:hover {
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.wrapper.focused {
+  border-color: transparent;
+  background: rgba(5, 7, 15, 0.85);
+  box-shadow: var(--chat-search-focus-shadow, 0 0 32px rgba(59, 130, 246, 0.08));
+  transition: box-shadow 0.45s ease;
+  isolation: isolate;
+}
+
+/*
+ * Original focus ring: padding defines ring thickness; mask = content-box XOR border-box → only the ring shows.
+ * Mask is on this shell (no transform); inner layer only rotates the conic — sweep moves around the edge, mask does not spin.
+ */
+.glowRingMask {
+  position: absolute;
+  inset: calc(-1 * var(--search-glow-outset));
+  border-radius: calc(var(--search-br) + var(--search-glow-outset));
+  padding: var(--search-glow-outset);
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.glowRing {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--search-br);
+  transform-origin: center;
+  background: var(
+    --chat-search-conic,
+    conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      transparent 250deg,
+      rgba(20, 184, 166, 0.9) 270deg,
+      rgba(56, 189, 248, 0.95) 300deg,
+      rgba(139, 92, 246, 0.9) 330deg,
+      transparent 360deg
+    )
+  );
+  animation: searchGlowRotate 3s linear infinite;
+  pointer-events: none;
+  transition: none;
+}
+
+@keyframes searchGlowRotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Company palette sweep: visible on frame 0, sweeps across, then eases out to transparent. */
+.companySweep {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--search-br);
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.companySweepHalo {
+  position: absolute;
+  inset: -35% -55%;
+  border-radius: inherit;
+  z-index: 0;
+  will-change: opacity, filter, transform;
+  pointer-events: none;
+  animation: companySweepHaloSeq 1.45s linear forwards;
+}
+
+.companySweepBand {
+  position: absolute;
+  inset: -20% -45%;
+  z-index: 1;
+  will-change: transform, opacity, filter;
+  pointer-events: none;
+  animation: companySweepBandSeq 1.45s linear forwards;
+}
+
+@keyframes companySweepHaloSeq {
+  0% {
+    opacity: 0.52;
+    filter: blur(40px);
+    transform: translateX(-92%) skewX(-11deg) scale(0.97);
+  }
+  44% {
+    opacity: 0.64;
+    filter: blur(50px);
+    transform: translateX(-12%) skewX(-11deg) scale(1.02);
+  }
+  58% {
+    opacity: 0.45;
+    filter: blur(44px);
+    transform: translateX(14%) skewX(-11deg) scale(1.03);
+  }
+  76% {
+    opacity: 0.14;
+    filter: blur(26px);
+    transform: translateX(32%) skewX(-11deg) scale(1.035);
+  }
+  90% {
+    opacity: 0.03;
+    filter: blur(16px);
+    transform: translateX(42%) skewX(-11deg) scale(1.04);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateX(46%) skewX(-11deg) scale(1.04);
+  }
+}
+
+@keyframes companySweepBandSeq {
+  0% {
+    opacity: 0.82;
+    transform: translateX(-102%) skewX(-11deg);
+    filter:
+      drop-shadow(0 0 10px rgba(255, 255, 255, 0.12))
+      drop-shadow(0 0 26px var(--sweep-glow-a, rgba(56, 189, 248, 0.48)))
+      drop-shadow(0 0 52px var(--sweep-glow-b, rgba(167, 139, 250, 0.34)));
+  }
+  48% {
+    opacity: 0.84;
+    transform: translateX(4%) skewX(-11deg);
+    filter:
+      drop-shadow(0 0 14px rgba(255, 255, 255, 0.16))
+      drop-shadow(0 0 32px var(--sweep-glow-a, rgba(56, 189, 248, 0.52)))
+      drop-shadow(0 0 58px var(--sweep-glow-b, rgba(167, 139, 250, 0.36)));
+  }
+  64% {
+    opacity: 0.62;
+    transform: translateX(58%) skewX(-11deg);
+    filter:
+      drop-shadow(0 0 10px rgba(255, 255, 255, 0.1))
+      drop-shadow(0 0 26px var(--sweep-glow-a, rgba(56, 189, 248, 0.36)))
+      drop-shadow(0 0 48px var(--sweep-glow-b, rgba(167, 139, 250, 0.24)));
+  }
+  78% {
+    opacity: 0.22;
+    transform: translateX(86%) skewX(-11deg);
+    filter:
+      drop-shadow(0 0 6px rgba(255, 255, 255, 0.06))
+      drop-shadow(0 0 16px var(--sweep-glow-a, rgba(56, 189, 248, 0.18)))
+      drop-shadow(0 0 28px var(--sweep-glow-b, rgba(167, 139, 250, 0.12)));
+  }
+  92% {
+    opacity: 0.05;
+    transform: translateX(102%) skewX(-11deg);
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(108%) skewX(-11deg);
+    filter: drop-shadow(0 0 0 transparent);
+  }
+}
+
+.searchInner {
+  position: relative;
+  /* Above company sweep (z-index 3) so the field + chip stay visible */
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: clamp(0.5rem, 0.4rem + 0.9vw, 0.875rem);
+  flex: 1;
+  min-width: 0;
+}
+
+/* Shrinks the input row so the text field ends where the company tag starts (same outer .wrapper bar) */
+.inputTrack {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputTrack .input {
+  flex: 1;
+  min-width: 0;
+}
+
+.inputTrackWithClear .input {
+  padding-right: 1.35rem;
+}
+
+/* Custom clear sits inside the input track only (native search clear is unreliable next to the tag) */
+.searchClearBtn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  line-height: 0;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.searchClearIcon {
+  display: block;
+  width: 12px;
+  height: 12px;
+}
+
+.customizationChip {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.25rem;
+  width: max-content;
+  max-width: min(42%, 9.25rem);
+  padding: 0.2rem 0.45rem;
+  border-radius: 7px;
+  background: rgba(15, 18, 32, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+}
+
+.customizationChipLabel {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  height: 1rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.88);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.customizationChipDismiss {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 0;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.customizationChipDismissIcon {
+  display: block;
+  width: 8px;
+  height: 8px;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 0;
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.icon svg {
+  display: block;
+  width: clamp(18px, 0.85rem + 0.65vw, 20px);
+  height: clamp(18px, 0.85rem + 0.65vw, 20px);
+}
+
+.wrapper.focused .icon {
+  color: var(--chat-search-hover-icon, var(--accent-violet));
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  outline: none;
+  /* 14px min (user floor), up to ~18px on large viewports */
+  font-size: clamp(14px, 0.7rem + 0.95vw, 1.125rem);
+  line-height: 1.45;
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.3;
+}
+
+.wrapper.compact {
+  padding: 0.5rem 1rem;
+}
+
+
+.wrapper.compact .input {
+  font-size: clamp(14px, 0.8125rem + 0.35vw, 1rem);
+}
+
+/* ── Mobile (phones + tablets) ── */
+@media (max-width: 1279px) {
+  .wrapper.wrapperHomeFocus {
+    max-width: var(--home-focus-prompt-width);
+  }
+
+  .wrapper.wide {
+    max-width: 100%;
+  }
+
+  /* ScrollHeader: scaled field beside 14px name */
+  .wrapper.scrollHeaderCompact {
+    --search-br: 18px;
+    padding: 0.4rem 0.65rem;
+    gap: 0.5rem;
+    max-width: 100%;
+  }
+
+  .wrapper.scrollHeaderCompact .searchInner {
+    gap: 0.5rem;
+  }
+
+  .wrapper.scrollHeaderCompact .icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .wrapper.scrollHeaderCompact .input {
+    font-size: 0.8125rem;
+  }
+}

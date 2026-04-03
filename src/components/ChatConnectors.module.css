@@ -1,0 +1,12 @@
+.connectorsSvg {
+  pointer-events: none;
+}
+
+.connLine {
+  stroke: rgba(56, 189, 248, 1);
+  stroke-width: 1.5;
+}
+
+.connNode {
+  filter: drop-shadow(0 0 4px rgba(34, 211, 238, 0.5));
+}

@@ -1,0 +1,212 @@
+/* Layout slots for SessionExitFeedback — interactive UI is React Spectrum S2. */
+
+.cardWrap {
+  width: 100%;
+  max-width: 617px;
+  margin: 0 auto;
+}
+
+.card {
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.cardPreview {
+  min-height: 161px;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+  background: linear-gradient(135deg, #3b63fb 0%, #6366f1 45%, #a855f7 100%);
+}
+
+.heroImg {
+  width: 100%;
+  height: 161px;
+  object-fit: cover;
+  display: block;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: stretch;
+  padding: 0 32px 32px;
+  box-sizing: border-box;
+}
+
+.topBlock {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.titleRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.divider {
+  width: 100%;
+}
+
+.rateSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+  max-width: 553px;
+}
+
+.rateTitle {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 20px;
+  color: #000;
+}
+
+.starRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+
+/* Two-row grid: stars and labels share the same five columns so labels stay centered under each star. */
+.starGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  column-gap: 12px;
+  /* 12px between star icons and labels (Poor / Average / …) — matches Figma spacing */
+  row-gap: 12px;
+  align-items: start;
+  width: 100%;
+}
+
+.starCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+}
+
+.starCell :global(svg) {
+  width: 28px;
+  height: 28px;
+}
+
+.starLabelCell {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 22px;
+  min-width: 0;
+  text-align: center;
+  overflow: visible;
+}
+
+.ratingLabel {
+  margin: 0;
+  font-size: 15px;
+  line-height: 22px;
+  color: #000;
+  min-height: 22px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.ratingLabelMuted {
+  color: transparent;
+  user-select: none;
+}
+
+/* Keeps row height when another rating is selected; text is invisible */
+.ratingLabelDim {
+  margin: 0;
+  font-size: 15px;
+  line-height: 22px;
+  min-height: 22px;
+  color: transparent;
+  user-select: none;
+}
+
+.checkboxGroup {
+  width: 100%;
+}
+
+/* Horizontal checkbox group: wrap chips (Spectrum default may stack vertically) */
+.checkboxGroup :global([role="group"]) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: flex-start;
+}
+
+.formBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.successRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 12px 0 0;
+  width: 100%;
+}
+
+.successRow :global(svg) {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: #00693a;
+}
+
+.successText {
+  color: #00693a;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.successStars {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 8px;
+  flex-wrap: wrap;
+}
+
+.successStarWrap {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.successStarWrap :global(svg) {
+  width: 40px;
+  height: 40px;
+}
+
+@media (max-width: 640px) {
+  .body {
+    padding: 0 20px 24px;
+  }
+}

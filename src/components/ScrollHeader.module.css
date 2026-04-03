@@ -1,0 +1,203 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: max(0.75rem, env(safe-area-inset-top)) max(1.5rem, env(safe-area-inset-right)) 0.75rem
+    max(1.5rem, env(safe-area-inset-left));
+  background: rgba(10, 12, 20, 0.5);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 1px solid rgba(100, 180, 220, 0.1);
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.header.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.name {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 1.375rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.searchWrap {
+  flex: 1;
+  min-width: 0;
+  max-width: 480px;
+}
+
+/* Mobile: title + search at opposite ends of the header bar */
+.headerMobile {
+  justify-content: stretch;
+}
+
+.mobileHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-width: 0;
+  gap: 0.75rem;
+}
+
+.mobileHeaderRow .name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+/* Mobile — text CTA with soft electric glow */
+.askAiGlowBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0.3rem 0.55rem;
+  min-height: 36px;
+  box-sizing: border-box;
+  border: 1px solid color-mix(in srgb, var(--accent-electric-blue) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-electric-blue) 12%, rgba(12, 14, 24, 0.5));
+  font-family: "Sora", system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #e0fbff;
+  cursor: pointer;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  text-shadow:
+    0 0 12px color-mix(in srgb, var(--accent-electric-blue) 85%, transparent),
+    0 0 28px color-mix(in srgb, var(--accent-electric-blue) 45%, transparent),
+    0 0 42px color-mix(in srgb, var(--accent-electric-blue) 22%, transparent);
+  box-shadow:
+    0 0 14px color-mix(in srgb, var(--accent-electric-blue) 35%, transparent),
+    0 0 32px color-mix(in srgb, var(--accent-electric-blue) 18%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    text-shadow 0.2s ease;
+}
+
+.askAiGlowBtn:hover {
+  color: #fff;
+  border-color: color-mix(in srgb, var(--accent-electric-blue) 65%, transparent);
+  background: color-mix(in srgb, var(--accent-electric-blue) 18%, rgba(12, 14, 24, 0.55));
+  text-shadow:
+    0 0 14px color-mix(in srgb, var(--accent-electric-blue) 95%, transparent),
+    0 0 36px color-mix(in srgb, var(--accent-electric-blue) 55%, transparent),
+    0 0 52px color-mix(in srgb, var(--accent-electric-blue) 28%, transparent);
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--accent-electric-blue) 45%, transparent),
+    0 0 40px color-mix(in srgb, var(--accent-electric-blue) 22%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.askAiGlowBtn:active {
+  transform: scale(0.98);
+}
+
+/* ── Section nav ── */
+.sectionNav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.sectionNavLink {
+  background: none;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  font-family: "Sora", system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  border-radius: 6px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.sectionNavLink:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.sectionNavLink:active {
+  color: var(--accent-electric-blue);
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: stretch;
+    gap: 0.5rem;
+    padding: max(0.75rem, env(safe-area-inset-top))
+      max(var(--page-margin-x), env(safe-area-inset-right)) 0.625rem
+      max(var(--page-margin-x), env(safe-area-inset-left));
+  }
+
+  .header:not(.headerMobile) .name {
+    font-size: 14px;
+    text-align: left;
+    line-height: 1.15;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: min(52%, 14rem);
+  }
+
+  .searchWrap {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .sectionNav {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.125rem;
+    padding-bottom: 0.125rem;
+  }
+
+  .sectionNav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sectionNavLink {
+    font-size: 0.6875rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .mobileHeaderRow .name {
+    font-size: 20px;
+    line-height: 1.15;
+  }
+}

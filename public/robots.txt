@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /ux-report
+Disallow: /exit-feedback
+
+Sitemap: https://www.midhunkrishnakumar.info/sitemap.xml

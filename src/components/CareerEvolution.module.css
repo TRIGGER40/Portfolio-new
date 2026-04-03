@@ -1,0 +1,683 @@
+.section {
+  padding: 4rem 1.5rem 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.sectionTitle {
+  font-family: "Sora", system-ui, sans-serif;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  margin: 0 0 1.75rem;
+}
+
+/* —— Desktop: polaroid grid —— */
+
+.polaroidGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+  align-items: start;
+  min-height: 320px;
+}
+
+.polaroidCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  background: none;
+  border: none;
+  padding: 0.5rem 0;
+  cursor: pointer;
+  font-family: inherit;
+  opacity: 0.35;
+  filter: grayscale(0.6);
+  transition: opacity 0.4s ease, filter 0.4s ease, transform 0.3s ease;
+}
+
+.polaroidCard:hover {
+  opacity: 0.7;
+  filter: grayscale(0.2);
+}
+
+.polaroidCardActive {
+  opacity: 1;
+  filter: grayscale(0);
+}
+
+.polaroidCardActive:hover {
+  opacity: 1;
+  filter: grayscale(0);
+}
+
+.polaroidMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  text-align: center;
+}
+
+.polaroidMetaName {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.polaroidMetaPeriod {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+
+.polaroidMetaFocus {
+  font-size: 0.6875rem;
+  color: var(--accent-electric-blue);
+  line-height: 1.35;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+.polaroidCardActive .polaroidMetaFocus {
+  opacity: 1;
+  max-height: 3rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.timelineColumn {
+  min-width: 0;
+}
+
+.timelineTrack {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-left: 0;
+}
+
+.timelineSpine {
+  position: absolute;
+  left: 13px;
+  top: 1.25rem;
+  bottom: 1.25rem;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    rgba(34, 211, 238, 0.15),
+    rgba(255, 255, 255, 0.08),
+    rgba(139, 92, 246, 0.12)
+  );
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+.timelineRow {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+  position: relative;
+  z-index: 1;
+}
+
+.nodeColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 28px;
+  flex-shrink: 0;
+  padding-top: 0.75rem;
+}
+
+.stageRow {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  font-family: inherit;
+  border-radius: 16px;
+  transition: transform 0.15s ease;
+}
+
+.stageRow:focus-visible {
+  outline: 2px solid var(--accent-electric-blue);
+  outline-offset: 2px;
+}
+
+.node {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin: 0.25rem 0 0;
+}
+
+.nodeInner {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  transition: box-shadow 0.2s, background 0.2s, border-color 0.2s, backdrop-filter 0.2s;
+}
+
+.node:not(.nodeActive) .nodeInner {
+  background: rgba(20, 22, 35, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.stageRow:hover .node:not(.nodeActive) .nodeInner {
+  background: rgba(34, 211, 238, 0.12);
+  border-color: rgba(34, 211, 238, 0.35);
+}
+
+.nodeActive .nodeInner {
+  background: linear-gradient(135deg, var(--accent-electric-blue) 0%, #38bdf8 100%);
+  border-color: transparent;
+  box-shadow: 0 0 16px rgba(34, 211, 238, 0.45);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.stageText {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  padding: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  transition: opacity 0.2s ease;
+}
+
+.stageRow:not(.stageRowActive) .stageText {
+  opacity: 0.5;
+}
+
+.stageName {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+
+.stageRowActive .stageName {
+  text-shadow:
+    0 0 6px rgba(34, 211, 238, 0.35),
+    0 0 14px rgba(34, 211, 238, 0.15);
+}
+
+.period {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.detailPanel {
+  position: sticky;
+  top: 5rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 34rem;
+  max-height: 34rem;
+}
+
+.detailPanelSurface {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardEdgeHit {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: min(28%, 7.5rem);
+  z-index: 2;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cardEdgeHit:focus-visible {
+  outline: 2px solid var(--accent-electric-blue);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+.cardEdgeHitLeft {
+  left: 0;
+}
+
+.cardEdgeHitRight {
+  right: 0;
+}
+
+.detailPanelMain {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+.detailInner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 0;
+}
+
+.progressWrap {
+  width: 20%;
+  max-width: 100%;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.detailBody + .progressWrap {
+  margin-top: calc(6rem - 0.75rem);
+}
+
+.progressTrack {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  transform-origin: left center;
+  background: #ffffff;
+  will-change: transform;
+}
+
+/* ── Polaroid photo card ── */
+.polaroid {
+  --polaroid-rotate: 0deg;
+  display: flex;
+  justify-content: center;
+  padding: 0.25rem 0 0.5rem;
+  perspective: 600px;
+}
+
+.polaroidInner {
+  background: #f5f2ec;
+  border-radius: 4px;
+  padding: 6px 6px 0;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.25),
+    0 8px 24px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transform: rotate(var(--polaroid-rotate));
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 140px;
+  width: 100%;
+}
+
+.polaroid:hover .polaroidInner {
+  transform: rotate(0deg) scale(1.03);
+}
+
+.polaroidImg {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 2px;
+  display: block;
+}
+
+.polaroidCaption {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 4px 10px;
+}
+
+.polaroidLabel {
+  font-family: "Caveat", "Segoe Script", cursive, sans-serif;
+  font-size: 0.9rem;
+  color: #3a3530;
+  font-weight: 500;
+}
+
+.polaroidYear {
+  font-family: "Caveat", "Segoe Script", cursive, sans-serif;
+  font-size: 0.75rem;
+  color: #8a7f72;
+}
+
+.illustrationWrap {
+  width: 100%;
+  padding: 0.5rem 0;
+  margin-bottom: 0.5rem;
+}
+
+.illustrationSvg {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  display: block;
+}
+
+.illustrationImg {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  display: block;
+  object-fit: contain;
+  opacity: 0.7;
+}
+
+.detailTitle {
+  font-family: "Sora", system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.detailPeriod {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.detailFocus {
+  font-size: 0.875rem;
+  color: var(--accent-electric-blue);
+  margin: 0;
+  font-weight: 500;
+}
+
+.detailBody {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  .polaroidGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .polaroidInner {
+    max-width: 160px;
+  }
+}
+
+/* —— Mobile (≤768px): stacked polaroid deck —— */
+
+.mobileStack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  height: 600px;
+  overflow: hidden;
+}
+
+.deckWrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 340px;
+}
+
+.deckCard {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  top: 0;
+  left: 0;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.deckCardActive {
+  pointer-events: auto;
+}
+
+.deckCard .polaroidInner {
+  max-width: 280px;
+}
+
+.deckMetaWrap {
+  position: relative;
+  width: 100%;
+  min-height: 160px;
+}
+
+.deckMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.35rem;
+  padding: 0 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.storiesWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.storiesPills {
+  display: flex;
+  gap: clamp(0.22rem, 1.4vw, 0.45rem);
+  width: 100%;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: clamp(0.2rem, 1.2vw, 0.35rem) 0 clamp(0.35rem, 2vw, 0.55rem);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.storiesPills::-webkit-scrollbar {
+  display: none;
+}
+
+.storyPill {
+  flex: 1 1 0;
+  min-width: clamp(2.25rem, 10.5vw, 4.5rem);
+  max-width: clamp(3.75rem, 19vw, 8.75rem);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.4rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+}
+
+.storyPill:focus-visible {
+  outline: 2px solid var(--accent-electric-blue);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.storyPillBar {
+  display: block;
+  height: clamp(2px, 0.35vw + 1.75px, 4px);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+  width: 100%;
+}
+
+.storyPillFill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  transform-origin: left center;
+  background: #ffffff;
+  will-change: transform;
+  transition: transform 0.05s linear;
+}
+
+.storyPillActive .storyPillBar {
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 0 0 clamp(0.5px, 0.1vw + 0.35px, 1px) rgba(255, 255, 255, 0.2);
+}
+
+.contentCard {
+  position: relative;
+  padding: 1.35rem 1.5rem;
+  border-radius: 20px;
+  background: rgba(10, 12, 22, 0.75);
+  border: 1px solid rgba(100, 180, 220, 0.12);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.contentCard .detailInner {
+  gap: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: var(--section-pad-y) var(--section-pad-x);
+  }
+
+  .sectionTitle {
+    font-size: var(--fs-section-title);
+  }
+
+  .subtitle {
+    font-size: 0.8125rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .contentCard {
+    padding: 1.1rem 1.2rem;
+    border-radius: 16px;
+  }
+
+  .detailTitle {
+    font-size: var(--fs-card-title);
+  }
+
+  .detailBody {
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  .detailFocus {
+    font-size: 0.8125rem;
+  }
+
+  .detailPeriod {
+    font-size: 0.75rem;
+  }
+
+  .illustrationSvg,
+  .illustrationImg {
+    max-height: 160px;
+  }
+
+  .polaroidInner {
+    max-width: 260px;
+    padding: 8px 8px 0;
+  }
+
+  .polaroidCaption {
+    padding: 6px 3px 8px;
+  }
+
+  .polaroidLabel {
+    font-size: 0.8rem;
+  }
+
+  .polaroidYear {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contentCard {
+    padding: 0.875rem 1rem;
+    border-radius: 14px;
+  }
+
+  .detailBody {
+    font-size: 0.8125rem;
+  }
+
+  .detailFocus {
+    font-size: 0.75rem;
+  }
+
+  .detailPeriod {
+    font-size: 0.6875rem;
+  }
+
+  .polaroidInner {
+    max-width: 240px;
+  }
+
+  .polaroidLabel {
+    font-size: 0.7rem;
+  }
+
+  .polaroidYear {
+    font-size: 0.625rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .storyPillFill {
+    transition: none;
+  }
+}

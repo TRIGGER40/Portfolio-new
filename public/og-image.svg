@@ -1,0 +1,33 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0c0e18"/>
+      <stop offset="50%" style="stop-color:#111827"/>
+      <stop offset="100%" style="stop-color:#0c0e18"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Subtle grid pattern -->
+  <g opacity="0.05">
+    <line x1="0" y1="0" x2="1200" y2="630" stroke="white" stroke-width="0.5"/>
+    <line x1="400" y1="0" x2="1200" y2="400" stroke="white" stroke-width="0.5"/>
+    <line x1="0" y1="200" x2="800" y2="630" stroke="white" stroke-width="0.5"/>
+  </g>
+  <!-- Accent line -->
+  <rect x="80" y="200" width="60" height="4" rx="2" fill="url(#accent)"/>
+  <!-- Name -->
+  <text x="80" y="260" font-family="system-ui, -apple-system, sans-serif" font-size="56" font-weight="700" fill="white">Midhun Krishnakumar</text>
+  <!-- Title -->
+  <text x="80" y="320" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="400" fill="#94a3b8">Product Designer at Adobe</text>
+  <!-- Description -->
+  <text x="80" y="390" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="400" fill="#64748b">~7 years across B2B, B2C, startups, agencies, and enterprise</text>
+  <text x="80" y="425" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="400" fill="#64748b">Enterprise UX, Design Systems, and Measurable Impact</text>
+  <!-- Bottom accent bar -->
+  <rect x="0" y="620" width="1200" height="10" fill="url(#accent)"/>
+  <!-- Domain -->
+  <text x="80" y="560" font-family="monospace" font-size="18" fill="#475569">midhunkrishnakumar.info</text>
+</svg>

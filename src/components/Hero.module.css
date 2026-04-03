@@ -1,0 +1,1499 @@
+.hero {
+  /* Title + subline stay in proportion; subline uses --hero-subline-ratio of title size */
+  --hero-title-size: clamp(2.75rem, 6vw, 4.75rem);
+  --hero-subline-ratio: 0.333;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem 6rem;
+  /* Allow project sphere labels (positioned past the square) to paint past the section */
+  overflow: visible;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Fixed overlays (focused search / chat) must not clip portaled or fixed UI */
+.heroUiOverlay {
+  overflow: visible;
+}
+
+/* Chat: fill viewport; middle column (cards) stays between fixed title/subtext and bottom input */
+.heroChatMode {
+  justify-content: flex-start;
+  align-items: stretch;
+  min-height: 100dvh;
+  height: 100dvh;
+  max-height: 100dvh;
+
+  min-width: 0;
+  max-width: 100%;
+  /* Clip after .heroUiOverlay (overflow:visible) — whole-page scroll in chat is never wanted */
+  overflow: hidden;
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+  padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box;
+}
+
+.hero.heroChatMode .neuralLines {
+  background-attachment: scroll;
+}
+
+.heroChatMode .heroLayout {
+  flex: 1 1 auto;
+  min-height: 0;
+  align-self: stretch;
+}
+
+.gradientMesh {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 60% 50% at 50% 30%,
+    rgba(56, 189, 248, 0.1) 0%,
+    transparent 50%
+  );
+  z-index: 0;
+  pointer-events: none;
+}
+
+.meshOrb1,
+.meshOrb2,
+.meshOrb3 {
+  display: none;
+}
+
+.neuralLines {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
+  background-attachment: fixed;
+  background-position: 0 0;
+  mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 20%, transparent 70%);
+  opacity: 0.6;
+  z-index: 0;
+}
+
+.heroLayout {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8rem;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 min(2rem, 4vw);
+}
+
+.heroLayoutCentered {
+  justify-content: center;
+}
+
+.heroLayoutChat {
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+  box-sizing: border-box;
+}
+
+/* Stacked chat input is portaled to body so position:fixed isn’t affected by transformed ancestors.
+   Only anchor the bottom strip — a full-viewport layer (inset:0) sat above the Q/A column and hid it. */
+.chatInputPortalLayer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 120;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.chatInputPortalLayer > * {
+  pointer-events: auto;
+}
+
+/* Mobile stacked chat: blur everything above the portaled input strip while the keyboard is up */
+:global(html[data-chat-input-compose][data-keyboard-open]) .hero.heroChatMode .gradientMesh,
+:global(html[data-chat-input-compose][data-keyboard-open]) .hero.heroChatMode .heroChatRouteShell {
+  filter: blur(32px);
+  pointer-events: none;
+  user-select: none;
+  transition: filter 0.2s ease;
+}
+
+:global(html[data-chat-input-compose][data-keyboard-open]) .chatInputPortalLayer {
+  z-index: 200;
+}
+
+/* Fill the column under .heroLayoutChat so .heroChatInner + .pillsSlot get a real flex height */
+.heroChatRouteShell {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1279px) {
+  .hero.heroChatMode {
+    box-sizing: border-box;
+    /* Lock the chat shell so iOS can't scroll it behind the keyboard */
+    position: fixed;
+    inset: 0;
+    height: 100%;
+    min-height: 0;
+    max-height: none;
+  }
+}
+
+.heroChatInner {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  align-items: center;
+  /* Space for fixed headline/subtext + bottom input (carousel + field) */
+  padding-top: max(7rem, calc(env(safe-area-inset-top) + 5.75rem));
+  padding-bottom: clamp(8.75rem, 24vh, 13rem);
+  box-sizing: border-box;
+}
+
+
+/* Inherits --chat-* from inline style; smooth handoff when company keywords change (after sweep). */
+.chatThemeScope {
+  transition:
+    color 0.9s cubic-bezier(0.33, 0.11, 0.25, 1),
+    border-color 0.9s cubic-bezier(0.33, 0.11, 0.25, 1),
+    box-shadow 0.9s cubic-bezier(0.33, 0.11, 0.25, 1),
+    opacity 0.9s cubic-bezier(0.33, 0.11, 0.25, 1),
+    filter 0.9s cubic-bezier(0.33, 0.11, 0.25, 1);
+}
+
+/* Don’t clip filter/backdrop blur on past stacks; keep flex height chain for the cards column */
+.heroChatInner .pillsSlot {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  max-width: 100%;
+  overflow: visible;
+  width: 100%;
+  /* Center query + response as a pair in the viewport (between header and input) */
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0 0.5rem;
+}
+
+/* Every breakpoint: fill the slot height and center Q+A (rules were only under 601px before, so phones sat high) */
+.heroChatInner .pillsSlotInner {
+  flex: 1 1 auto;
+  min-height: 0;
+  justify-content: center;
+  width: 100%;
+  align-self: stretch;
+}
+
+.heroChatInner .chatCardsMount {
+  justify-content: center;
+}
+
+
+.chatCardsMount {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (min-width: 601px) {
+  .heroChatInner {
+    padding-top: max(9rem, calc(env(safe-area-inset-top) + 7.5rem));
+    padding-bottom: clamp(8.25rem, 18vh, 11.5rem);
+    /* Inherited by InlineConversationCards for desktop scroll caps on query / answer */
+    --chat-desktop-safe-top: max(9rem, calc(env(safe-area-inset-top) + 7.5rem));
+    --chat-desktop-safe-bottom: clamp(8.25rem, 18vh, 11.5rem);
+  }
+
+  /* Stacked sizes: headline is in-flow on mobile — no padding-top needed */
+  @media (max-width: 1279px) {
+    .heroChatInner {
+      padding-top: 0;
+      --chat-desktop-safe-top: 0px;
+    }
+  }
+
+  /* Wide chat: keep query + reply row nearer the bottom (suggestion pills), clear of headline */
+  .heroChatInner .pillsSlot {
+    width: min(960px, calc(100% - 3rem));
+    max-width: 100%;
+    margin-inline: auto;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.heroHomeInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8rem;
+  width: 100%;
+}
+
+/* Same max width + container query title scale as .content (hero name block) */
+.heroTitleBlock {
+  width: 100%;
+  max-width: min(640px, 100%);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* “Ask about Midhun” (chat header + focused overlay) — keep on one line at every breakpoint */
+.heroTitleBlock .headline {
+  white-space: nowrap;
+}
+
+.headlineFixedSlot .heroTitleBlock {
+  padding-inline: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right));
+  box-sizing: border-box;
+}
+
+.headlineFixedSlot {
+  position: fixed;
+  top: 2rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.chatHeadlineRow {
+  display: grid;
+  grid-template-columns: minmax(3rem, 3.5rem) 1fr minmax(3rem, 3.5rem);
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+/* Balance the back button column so the title stays optically centered */
+.chatHeadlineRow::after {
+  content: "";
+  grid-column: 3;
+  width: 100%;
+  pointer-events: none;
+}
+
+.chatHeadlineBackArrow {
+  grid-column: 1;
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.chatHeadlineBackArrow:hover {
+  color: var(--text-primary);
+}
+
+.chatHeadlineBackArrow:active {
+  opacity: 0.85;
+}
+
+.headlineFixedSlot .chatHeadlineRow .headline {
+  grid-column: 2;
+  text-align: center;
+  pointer-events: auto;
+  margin-bottom: 0;
+  margin-top: 0;
+  /* Don’t let the 1fr column + min-width:0 shrink and force a wrap */
+  min-width: auto;
+  width: auto;
+  max-width: 100%;
+  justify-self: center;
+}
+
+.headlineFixedSlot .headline {
+  text-align: center;
+  pointer-events: auto;
+  margin-bottom: 0;
+}
+
+.chatSubtextResponsiveWrap {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  align-self: stretch;
+}
+
+.chatSubtextMeasure {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  width: 100%;
+  left: 0;
+  top: 0;
+  margin: 0;
+  z-index: -1;
+}
+
+.chatSubtext {
+  /* Same sizing logic as .subline (tracks --hero-title-size × --hero-subline-ratio) */
+  font-size: clamp(
+    0.875rem,
+    calc(var(--hero-title-size) * var(--hero-subline-ratio)),
+    1.3rem
+  );
+  color: var(--text-secondary);
+  opacity: 0.5;
+  margin: 0;
+  font-weight: 400;
+  text-align: center;
+  line-height: 1.45;
+  max-width: 100%;
+  word-break: normal;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+}
+
+.searchFixedSlot {
+  position: fixed;
+  bottom: calc(2rem + var(--keyboard-inset, 0px));
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 20;
+  transition: bottom 0.35s ease, top 0.35s ease, transform 0.35s ease;
+}
+
+/* Keep carousel + field pinned to the visible bottom as the software keyboard opens/closes */
+@media (max-width: 1279px) {
+  .heroLayoutChat .searchFixedSlot,
+  .chatInputPortalLayer .searchFixedSlot {
+    transition: bottom 0.01s linear, transform 0.01s linear;
+  }
+}
+
+.homeContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8rem;
+  width: 100%;
+  transition: opacity 0.2s ease, pointer-events 0.2s ease;
+}
+
+.homeContentHidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.homeInputFocusedMode {
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.homeFocusedBackdrop {
+  position: fixed;
+  inset: 0;
+  /* Above .header in ScrollHeader (100) so overlay wins while header exits */
+  z-index: 105;
+  cursor: default;
+}
+
+.homeFocusedSlot {
+  /* Prompt carousel + search share one column width */
+  --home-focus-prompt-width: min(500px, 100%);
+  position: fixed;
+  inset: 0;
+  /* Padding (not left/right) so width:100% children match the visual viewport on mobile Safari */
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding-left: max(env(safe-area-inset-left, 0px), var(--page-margin-x), 1.25rem, 5vw);
+  padding-right: max(env(safe-area-inset-right, 0px), var(--page-margin-x), 1.25rem, 5vw);
+  transform: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: safe center;
+  gap: 0.75rem;
+  padding-top: max(0.75rem, env(safe-area-inset-top));
+  padding-bottom: calc(max(0.75rem, env(safe-area-inset-bottom)) + var(--keyboard-inset, 0px));
+  overflow-y: auto;
+  overflow-x: clip;
+  -webkit-overflow-scrolling: touch;
+  text-align: center;
+  pointer-events: none;
+  z-index: 110;
+}
+
+.homeFocusedSlotVisible {
+  pointer-events: auto;
+}
+
+/* Infinite marquee rows behind the focused content */
+.marqueeRowTop,
+.marqueeRowBottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 109;
+  pointer-events: none;
+}
+
+.marqueeRowTop {
+  top: 0;
+  mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+}
+
+.marqueeRowBottom {
+  bottom: 0;
+  mask-image: linear-gradient(to top, black 30%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, black 30%, transparent 100%);
+}
+
+.homeFocusedSlotInner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  /* Fill space between left/right inset; width comes from parent, not a fixed px cap */
+  max-width: 100%;
+  flex-shrink: 0;
+  min-width: 0;
+  /* Horizontal inset comes from .homeFocusedSlot; keep a sliver for focus glow only */
+  padding-inline: max(2px, 0.75vw);
+  box-sizing: border-box;
+}
+
+.homeFocusedSlot .heroTitleBlock {
+  max-width: 100%;
+}
+
+.homeFocusedSlot .headline {
+  margin-bottom: 0;
+}
+
+.homeFocusedSlot .searchRow {
+  width: 100%;
+  justify-content: center;
+}
+
+.homeFocusedInputSlot {
+  width: 100%;
+  max-width: var(--home-focus-prompt-width);
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.homeFocusedSlot .chatSubtext {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.pillsWrapper {
+  width: 100%;
+  min-width: 0;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.homeFocusedSlot .pillsWrapper {
+  margin-top: 0;
+  max-width: var(--home-focus-prompt-width);
+}
+
+.homeFocusedInputWrap {
+  width: 100%;
+  transform-origin: left center;
+}
+
+.searchWrapperStretched {
+  max-width: 600px;
+  width: 100%;
+}
+
+.searchFixedCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: min(680px, calc(100% - 2rem));
+  /* Prompt carousel + search use the same width (see .heroLayoutChat rules below) */
+  --chat-strip-prompt-width: min(680px, calc(100% - 3rem));
+}
+
+/* Fixed chat strip: suggestion rail matches input row width at every breakpoint */
+.heroLayoutChat .searchFixedCol,
+.chatInputPortalLayer .searchFixedCol {
+  --chat-strip-prompt-width: min(680px, calc(100% - 3rem));
+}
+
+.heroLayoutChat .searchFixedCol > :first-child,
+.chatInputPortalLayer .searchFixedCol > :first-child {
+  width: 100%;
+  max-width: var(--chat-strip-prompt-width);
+  min-width: 0;
+  align-self: center;
+  box-sizing: border-box;
+}
+
+.heroLayoutChat .searchRow.searchFixed,
+.chatInputPortalLayer .searchRow.searchFixed {
+  width: 100%;
+  max-width: var(--chat-strip-prompt-width);
+  box-sizing: border-box;
+}
+
+.searchFixedSlot .searchRow {
+  margin: 0;
+  align-items: stretch;
+}
+
+.inputDisclaimer {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0;
+  text-align: center;
+  opacity: 0.3;
+}
+
+/* Touch / narrow: icon-only dismiss — fixed bottom of viewport, centered (see @media) */
+.touchFooterClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  min-height: 48px;
+  padding: 0;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+@media (max-width: 768px) {
+  .touchFooterClose {
+    position: fixed;
+    left: 50%;
+    right: auto;
+    bottom: calc(max(0.75rem, env(safe-area-inset-bottom)) + var(--keyboard-inset, 0px));
+    margin: 0;
+    transform: translateX(-50%);
+    z-index: 25;
+  }
+
+  .touchFooterClose:active {
+    background: rgba(0, 0, 0, 0.65);
+    transform: translateX(-50%) scale(0.96);
+  }
+}
+
+.touchFooterCloseIcon {
+  display: block;
+  flex-shrink: 0;
+}
+
+.pillsSlot {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 200px;
+  padding: 2rem 0;
+}
+
+.content {
+  flex-shrink: 0;
+  text-align: left;
+  max-width: 640px;
+}
+
+.contentExpanded {
+  max-width: 100%;
+  flex: 1;
+  min-width: 0;
+}
+
+.contentCentered {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 6rem;
+}
+
+.contentCentered .headline,
+.contentCentered .subline {
+  text-align: center;
+}
+
+.sphereSection {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 3rem;
+  overflow: visible;
+}
+
+.headline {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: var(--hero-title-size);
+  font-weight: 400;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.subline {
+  font-size: clamp(
+    0.875rem,
+    calc(var(--hero-title-size) * var(--hero-subline-ratio)),
+    1.3rem
+  );
+  color: var(--text-secondary);
+  opacity: 0.6;
+  margin: 0 0 2.5rem;
+  font-weight: 400;
+  max-width: 100%;
+  word-break: normal;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+  hyphens: none;
+  -webkit-hyphens: none;
+}
+
+.searchRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 0 1rem;
+}
+
+.searchRow.searchFixed {
+  position: relative;
+  width: 100%;
+  max-width: min(680px, calc(100% - 3rem));
+  transition: opacity 0.35s ease;
+  box-sizing: border-box;
+}
+
+.threadNav {
+  display: flex;
+  flex-direction: row;
+  flex: 0 1 260px;
+  min-width: 0;
+  max-width: 280px;
+  gap: 0.35rem;
+  align-items: stretch;
+  align-self: stretch;
+}
+
+.threadNavBtn {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 0;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.jumpToLatestBtn {
+  flex: 2 1 auto;
+  min-width: max-content;
+  padding: 0 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  font-family: inherit;
+  line-height: 1.2;
+  color: var(--text-secondary);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.jumpToLatestBtn:hover {
+  color: var(--chat-thread-hover-color, var(--accent-electric-blue));
+  border-color: var(--chat-thread-hover-border, rgba(34, 211, 238, 0.35));
+  background: rgba(255, 255, 255, 0.06);
+  transition: color 0.45s ease, border-color 0.45s ease;
+}
+
+/* Wide chat only: pill floats above the input strip (see Hero.tsx — not rendered on stacked/mobile) */
+.jumpToLatestFloating {
+  position: fixed;
+  z-index: 21;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: calc(max(7.5rem, calc(env(safe-area-inset-bottom) + 6.25rem)) + var(--keyboard-inset, 0px));
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: inherit;
+  line-height: 1.2;
+  color: var(--text-secondary);
+  background: rgba(22, 24, 38, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.jumpToLatestFloating:hover {
+  color: var(--chat-thread-hover-color, var(--accent-electric-blue));
+  border-color: var(--chat-thread-hover-border, rgba(34, 211, 238, 0.35));
+  background: rgba(30, 32, 48, 0.96);
+  transition: color 0.45s ease, border-color 0.45s ease;
+}
+
+.jumpToLatestFloating:active {
+  transform: scale(0.97);
+}
+
+@media (max-width: 768px) {
+  .jumpToLatestFloating {
+    display: none;
+  }
+}
+
+.threadNavBtn:hover:not(:disabled) {
+  color: var(--chat-thread-hover-color, var(--accent-electric-blue));
+  border-color: var(--chat-thread-hover-border, rgba(34, 211, 238, 0.3));
+  transition: color 0.45s ease, border-color 0.45s ease;
+}
+
+.threadNavBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.threadNavArrowUp,
+.threadNavArrowDown {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid currentColor;
+  border-top: 2px solid currentColor;
+}
+
+.threadNavArrowUp {
+  transform: rotate(45deg);
+  margin-bottom: -2px;
+}
+
+.threadNavArrowDown {
+  transform: rotate(-135deg);
+  margin-top: -2px;
+}
+
+.searchWrapper {
+  flex: 1;
+  min-width: 0;
+  transition: margin 0.35s ease;
+}
+
+.searchShifted {
+  margin-top: 0;
+}
+
+.searchFixed .searchWrapper {
+  flex: 1;
+  max-width: 560px;
+}
+
+/* Wide chat: ↑ / ↓ stacked to the right of the input; Jump to latest is a separate floating control */
+@media (min-width: 601px) {
+  /* Match pillsSlot so suggestion chips + search share the same centered column as Q/A */
+  .heroLayoutChat .searchFixedCol,
+  .chatInputPortalLayer .searchFixedCol {
+    max-width: min(960px, calc(100% - 3rem));
+  }
+
+  .heroLayoutChat .searchFixed .searchRow,
+  .chatInputPortalLayer .searchFixed .searchRow {
+    align-items: stretch;
+    flex-wrap: nowrap;
+    gap: 4px;
+  }
+
+  .heroLayoutChat .searchFixed .searchWrapper,
+  .chatInputPortalLayer .searchFixed .searchWrapper {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    max-width: none;
+    align-self: stretch;
+    display: flex;
+  }
+
+  /* SearchBar root (.wrapper): fill row height so chevron column can match */
+  .heroLayoutChat .searchFixed .searchWrapper > div,
+  .chatInputPortalLayer .searchFixed .searchWrapper > div {
+    flex: 1;
+    align-self: stretch;
+    min-height: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .heroLayoutChat .searchFixed .threadNav,
+  .chatInputPortalLayer .searchFixed .threadNav {
+    flex-direction: column;
+    flex: 0 0 44px;
+    width: 44px;
+    max-width: 44px;
+    min-width: 44px;
+    gap: 8px;
+    align-items: stretch;
+    align-self: stretch;
+    min-height: 0;
+  }
+
+  .heroLayoutChat .searchFixed .threadNav .threadNavBtn,
+  .chatInputPortalLayer .searchFixed .threadNav .threadNavBtn {
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+  }
+}
+
+.hint {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  opacity: 0.55;
+  margin: -0.25rem 0 0;
+}
+
+.scrollIndicator {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.scrollIndicator:hover {
+  color: var(--text-secondary);
+}
+
+.scrollChevron {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  animation: scrollBounce 2.5s ease-in-out infinite;
+}
+
+@keyframes scrollBounce {
+  0%,
+  100% {
+    transform: rotate(45deg) translateY(0);
+  }
+  50% {
+    transform: rotate(45deg) translateY(6px);
+  }
+}
+
+.pillsSlotInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .heroLayout {
+    padding: 0 1rem;
+  }
+}
+
+/* Stack title / search above project sphere when viewport is under “wide desktop” */
+@media (max-width: 1499px) {
+  .heroLayout {
+    justify-content: center;
+  }
+
+  .heroHomeInner {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+  }
+
+  .homeContent {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    width: 100%;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: min(640px, 100%);
+    margin-inline: auto;
+  }
+
+  .content .headline,
+  .content .subline {
+    text-align: center;
+    width: 100%;
+  }
+
+  .content .hint {
+    text-align: center;
+    width: 100%;
+  }
+
+  .sphereSection {
+    padding-left: 0;
+    width: 100%;
+    max-width: min(520px, 100%);
+    margin: 0 auto;
+    overflow: visible;
+  }
+
+  .searchRow {
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* searchWrapper had flex:1 — it stretched full row width so the 480px bar sat flush left */
+  .content .searchWrapper {
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 480px;
+    margin-inline: auto;
+  }
+}
+
+/* Stacked layout (sphere below): keep hero name on one line; title + subline share one scale */
+@media (min-width: 769px) and (max-width: 1499px) {
+  .content,
+  .heroTitleBlock {
+    container-type: inline-size;
+    /* Slightly tighter ratio when title is capped for single-line */
+    --hero-subline-ratio: 0.36;
+    --hero-title-size: clamp(1.75rem, 1.55vw + 1.35rem, 3.15rem);
+  }
+
+  .content .headline,
+  .heroTitleBlock .headline {
+    white-space: nowrap;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+  }
+
+  @supports (font-size: 1cqi) {
+    .content,
+    .heroTitleBlock {
+      --hero-title-size: clamp(1.75rem, 7cqi, 3.15rem);
+    }
+  }
+}
+
+/* ≥1500px: main hero title can use the wider scale, but “Ask about Midhun” (.heroTitleBlock) should not jump up — keep the same cap as the prior breakpoint */
+@media (min-width: 1500px) {
+  .heroTitleBlock {
+    container-type: inline-size;
+    --hero-subline-ratio: 0.36;
+    --hero-title-size: clamp(1.75rem, 1.55vw + 1.35rem, 3.15rem);
+  }
+
+  .heroTitleBlock .headline {
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+  }
+
+  @supports (font-size: 1cqi) {
+    .heroTitleBlock {
+      --hero-title-size: clamp(1.75rem, 7cqi, 3.15rem);
+    }
+  }
+}
+
+@media (max-width: 1279px) {
+  /* Mobile: make headline in-flow instead of position:fixed.
+     iOS Safari doesn't reliably forward touches to pointer-events:auto children
+     inside a pointer-events:none fixed element. In-flow avoids the issue entirely. */
+  .headlineFixedSlot {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    z-index: auto;
+    pointer-events: auto;
+    padding: max(1rem, env(safe-area-inset-top)) 0.75rem 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .chatHeadlineRow {
+    pointer-events: auto;
+  }
+
+  /* Headline is in-flow on mobile — remove the large padding-top that reserved space for it */
+  .heroChatInner {
+    padding-top: 0;
+  }
+
+  /* Keep cards vertically centered between headline and bottom input strip */
+  .heroChatInner .pillsSlot {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .searchFixedSlot {
+    bottom: calc(max(1rem, env(safe-area-inset-bottom)) + var(--keyboard-inset, 0px));
+    padding: 0 0.5rem;
+  }
+
+  .pillsSlot {
+    min-height: 120px;
+    padding: 1rem 0 4rem;
+  }
+}
+
+/* Stacked / portaled chat input: shared 12px (+ safe area) gutter; input row and thread nav share width */
+@media (max-width: 1279px) {
+  .heroLayoutChat .searchFixedSlot,
+  .chatInputPortalLayer .searchFixedSlot {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .heroLayoutChat .searchFixedCol,
+  .chatInputPortalLayer .searchFixedCol {
+    padding-left: max(12px, env(safe-area-inset-left, 0px));
+    padding-right: max(12px, env(safe-area-inset-right, 0px));
+    box-sizing: border-box;
+  }
+
+  /*
+   * Gutters live on .pillsSlot (not .heroChatInner): same pattern as .searchFixedCol —
+   * max-width matches the input bar so cards align with it.
+   */
+  .heroLayoutChat .heroChatInner.heroChatInnerStacked .pillsSlot {
+    width: 100%;
+    max-width: min(680px, calc(100% - 3rem));
+    margin-inline: auto;
+    box-sizing: border-box;
+    padding-left: max(12px, env(safe-area-inset-left, 0px));
+    padding-right: max(12px, env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (max-width: 768px) {
+  /* Home hero: sphere / mesh bleed + vw sizing can widen the document sideways on touch */
+  .hero:not(.heroChatMode) {
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
+
+  .hero {
+    --hero-subline-ratio: 0.36;
+    --hero-title-size: clamp(1.9rem, 7vw, 2.9rem);
+  }
+
+  .content .headline {
+    white-space: normal;
+  }
+
+  .headline {
+    line-height: 1.12;
+  }
+
+  .subline {
+    margin-bottom: 1.5rem;
+    line-height: 1.45;
+  }
+
+  .chatSubtext {
+    padding: 0 0.25rem;
+  }
+
+  .hint {
+    font-size: 0.8125rem;
+  }
+
+  .threadNavBtn {
+    width: var(--touch-min);
+    min-height: 40px;
+  }
+
+  .jumpToLatestBtn {
+    min-height: 40px;
+    font-size: 0.75rem;
+    padding: 0 0.5rem;
+  }
+
+  .hero {
+    padding: 1.5rem var(--section-pad-x) max(5rem, env(safe-area-inset-bottom));
+    min-height: min(100vh, 100vh);
+  }
+
+  .heroLayout {
+    padding: 0;
+  }
+
+  .searchWrapper {
+    max-width: 100%;
+  }
+
+  .neuralLines {
+    background-attachment: scroll;
+  }
+
+  .searchRow.searchFixed {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 0.5rem;
+    width: min(680px, 100%);
+  }
+
+  .searchFixed .searchWrapper {
+    order: 0;
+    flex: 1 1 min(0, 100%);
+    min-width: 0;
+  }
+
+  .scrollIndicator {
+    bottom: calc(max(1rem, env(safe-area-inset-bottom)) + var(--keyboard-inset, 0px));
+  }
+
+  .homeFocusedSlot {
+    gap: 0.5rem;
+    /* Match body gutters + stronger vw floor so narrow phones don’t feel edge‑locked */
+    padding-left: max(
+      env(safe-area-inset-left, 0px),
+      var(--page-margin-x),
+      var(--section-pad-x),
+      1.5rem,
+      7vw
+    );
+    padding-right: max(
+      env(safe-area-inset-right, 0px),
+      var(--page-margin-x),
+      var(--section-pad-x),
+      1.5rem,
+      7vw
+    );
+  }
+
+  .homeFocusedSlot .chatSubtext {
+    margin-bottom: 0.75rem;
+  }
+
+  /* Extra air beside the focused search bar on phones */
+  .homeFocusedInputSlot {
+    padding-inline: max(1rem, 6vw);
+    box-sizing: border-box;
+  }
+
+  /* Sphere label pills extend past the node circle; clipping hid them — keep overflow visible
+     (see HeroProjectSphere label anchor clamp + pill max-width). */
+  .sphereSection {
+    overflow: visible;
+  }
+}
+
+/* Stacked chat: input strip flush to bottom (safe area); horizontal padding from section */
+@media (max-width: 600px) {
+  /*
+   * Inherited by InlineConversationCards — caps scroll regions so Q/A don’t run under the fixed
+   * headline or over the bottom input (see queryScrollRegion / answerScrollRegion).
+   * Phones need ~as much top inset as tablet stacked (601–1023); otherwise centered Q+A tucks under
+   * the fixed title + subtitle (z-index 15).
+   */
+  .heroLayoutChat .heroChatInner {
+    --chat-mobile-safe-top: 0px;
+    --chat-mobile-safe-bottom: clamp(8.5rem, 18vh, 10rem);
+    padding-top: 0;
+    padding-bottom: clamp(8.5rem, 18vh, 10rem);
+  }
+
+  .heroLayoutChat .searchFixedSlot,
+  .chatInputPortalLayer .searchFixedSlot {
+    bottom: calc(max(0.75rem, env(safe-area-inset-bottom)) + var(--keyboard-inset, 0px));
+    left: 0;
+    right: 0;
+    /* Horizontal inset lives on .searchFixedCol (matches input + thread row + disclaimer) */
+    padding-inline: 0;
+    box-sizing: border-box;
+  }
+
+  .heroLayoutChat .searchFixedCol,
+  .chatInputPortalLayer .searchFixedCol {
+    width: 100%;
+    max-width: min(640px, 100%);
+    margin-inline: auto;
+    align-items: stretch;
+    --chat-strip-prompt-width: 100%;
+  }
+
+  .heroLayoutChat .searchRow.searchFixed,
+  .chatInputPortalLayer .searchRow.searchFixed {
+    width: 100%;
+    max-width: 100%;
+    margin-inline: auto;
+    justify-content: center;
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+  }
+
+  .heroLayoutChat .searchFixed .searchWrapper,
+  .chatInputPortalLayer .searchFixed .searchWrapper {
+    max-width: none;
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  /* Stacked: thread controls in a row under the field (Jump to latest stays inline here) */
+  .heroLayoutChat .searchFixed .threadNav,
+  .chatInputPortalLayer .searchFixed .threadNav {
+    order: 1;
+    flex-direction: row;
+    width: 100%;
+    max-width: none;
+    flex: 1 1 100%;
+    justify-content: stretch;
+    align-self: stretch;
+    box-sizing: border-box;
+  }
+
+  .heroLayoutChat .inputDisclaimer,
+  .chatInputPortalLayer .inputDisclaimer {
+    align-self: stretch;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .heroLayoutChat .pillsSlotStackedChat {
+    padding-bottom: 0.25rem;
+  }
+
+  .heroLayoutChat .heroChatInner.heroChatInnerStacked .pillsSlot {
+    max-width: 100%;
+  }
+
+  .heroLayoutChat .heroChatInner.heroChatInnerStacked {
+    /* Headline is in-flow, so subtract its auto height (~5rem) + bottom input strip */
+    --chat-stack-max-content-height: calc(
+      100dvh - clamp(8.5rem, 18vh, 10rem) - var(--keyboard-inset, 0px)
+    );
+    padding-bottom: clamp(8.5rem, 18vh, 10rem);
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1279px) {
+  .heroLayoutChat .heroChatInner.heroChatInnerStacked {
+    --chat-stack-max-content-height: calc(
+      100dvh - clamp(5.75rem, 12vh, 8.5rem) - var(--keyboard-inset, 0px)
+    );
+  }
+}
+
+@media (max-width: 1279px) {
+  .heroLayoutChat .pillsSlot {
+    justify-content: center;
+    align-items: stretch;
+  }
+
+  /*
+   * Stacked + portaled input: give the slot + inner real flex height so cards
+   * center between the in-flow headline and the portaled bottom strip.
+   */
+  .heroLayoutChat .heroChatInner.heroChatInnerStacked {
+    flex: 1 1 0%;
+    min-height: 0;
+  }
+
+  .heroLayoutChat .heroChatInner.heroChatInnerStacked .pillsSlot {
+    flex: 1 1 0%;
+    min-height: 0;
+    align-self: stretch;
+    /* Re-center the card stack in the band between fixed header + bottom strip */
+    justify-content: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .heroLayoutChat .pillsSlotInner {
+    justify-content: center;
+    align-items: stretch;
+    min-height: 0;
+  }
+
+  .heroLayoutChat .heroChatInner.heroChatInnerStacked .pillsSlotInner {
+    flex: 1 1 0%;
+    min-height: 0;
+    align-self: stretch;
+    justify-content: center;
+  }
+
+  .heroLayoutChat .heroChatInner .chatCardsMount {
+    justify-content: center;
+    align-items: stretch;
+  }
+
+  .heroLayoutChat .chatCardsMount {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    max-height: var(
+      --chat-stack-max-content-height,
+      min(85dvh, calc(100vh - max(12rem, env(safe-area-inset-top)) - clamp(8rem, 22vh, 12rem)))
+    );
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+  }
+
+  /*
+   * Stacked: drop the extra max-height cap — it lived on this wrapper and was always shorter than the
+   * real flex slot (pillsSlotInner already sits between header padding + bottom padding for the portaled
+   * strip). Let the column grow to that slot; inner .answerScrollRegion still scrolls.
+   */
+  /*
+   * Shorter threads: center the mount in the slot (margin auto). Long threads: grow up to the slot
+   * (max-height 100%) so inner .answerScrollRegion still gets a bounded flex height.
+   */
+  .heroLayoutChat .heroChatInner.heroChatInnerStacked .chatCardsMount {
+    flex: 0 1 auto;
+    min-height: 0;
+    height: auto;
+    max-height: 100%;
+    width: 100%;
+  }
+}
+
+/* Phones: must follow the ≤1023 rules above so this padding beats .pillsSlot { 0.5rem }. */
+@media (max-width: 600px) {
+  .heroLayoutChat .heroChatInner.heroChatInnerStacked .pillsSlot {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+  }
+}
+
+/*
+ * Keyboard open: padding stays the same — .searchFixedSlot handles its own positioning via
+ * --keyboard-inset. Changing padding-bottom here caused the card stack to get stuck offset
+ * upward when the keyboard dismissed on iOS.
+ */
+
+@media (max-width: 390px) {
+  .hero {
+    --hero-title-size: clamp(1.65rem, 7.5vw, 2.15rem);
+    --hero-subline-ratio: 0.38;
+  }
+}
